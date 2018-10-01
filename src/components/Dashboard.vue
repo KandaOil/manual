@@ -1,5 +1,12 @@
 <template>
     <div id="dashboard">
+        <nav>
+            <div class="nav-wrapper blue">
+                <div class="container">
+                    <router-link to="/" class="brand-logo">Manual Manager</router-link>
+                </div>
+            </div>
+        </nav>
         <ul class="collection with-header">
             <li class="collection-header">
                 <h4>Projects</h4>
@@ -21,29 +28,33 @@
 </template>
 
 <script>
-import db from './firebaseInit'
+import db from "./firebaseInit";
 export default {
-    name: 'dashboard',
-    data () {
-        return {
-            projects: []
-        }
-    },
-    created () {
-        db.collection('projects').orderBy('project_id').get().then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                console.log(doc.id);
-                const data = {
-                    'id': doc.id,
-                    'project_id': doc.data().project_id,
-                    'project_name': doc.data().project_name,
-                    'project_des': doc.data().project_des,
-                    'pages': doc.data().pages
-                }
-                this.projects.push(data)
-            })
-        })
-    }
-}
+  name: "dashboard",
+  data() {
+    return {
+      projects: []
+    };
+  },
+  created() {
+    db
+      .collection("projects")
+      .orderBy("project_id")
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          console.log(doc.id);
+          const data = {
+            id: doc.id,
+            project_id: doc.data().project_id,
+            project_name: doc.data().project_name,
+            project_des: doc.data().project_des,
+            pages: doc.data().pages
+          };
+          this.projects.push(data);
+        });
+      });
+  }
+};
 </script>
 

@@ -1,5 +1,12 @@
 <template>
     <div id="new-manual">
+        <nav>
+            <div class="nav-wrapper blue">
+                <div class="container">
+                    <router-link to="/" class="brand-logo">Manual Manager</router-link>
+                </div>
+            </div>
+        </nav>
         <h3>New Manual</h3>
         <h5>Project</h5>
         <div class="row">
@@ -76,14 +83,14 @@
 </template>
 
 <style>
- #preview {
+#preview {
   position: relative;
   border: 2px solid rgb(148, 146, 146);
   display: inline-block;
   /* width: 300px;
   height: 300px; */
-    margin-left: 20%; 
-} 
+  margin-left: 20%;
+}
 .label-circle {
   width: 30px;
   height: 30px;
@@ -98,45 +105,47 @@
 </style>
 
 <script>
-import db from './firebaseInit.js'
+import db from "./firebaseInit.js";
 export default {
-    name: 'new-manual',
-    data () {
-        return {
-            project_id: null,
-            project_name: null,
-            project_des: null,
-            url: null,
-            labels: []
-        }
+  name: "new-manual",
+  data() {
+    return {
+      project_id: null,
+      project_name: null,
+      project_des: null,
+      url: null,
+      labels: []
+    };
+  },
+  methods: {
+    onFileChange(e) {
+      const file = e.target.files[0];
+      this.url = URL.createObjectURL(file);
     },
-    methods: {
-        onFileChange(e) {
-            const file = e.target.files[0];
-            this.url = URL.createObjectURL(file);
-        },
-        addLabel (e) {
-            var x = e.pageX
-            var y = e.pageY
-            //console.log(e,x,y)
-            var labelLength = this.labels.length
-            //console.log(labelLength)
-            this.labels.push({
-                x: x,
-                y: y,
-                description: ''
-            })
-        },
-        saveManual () {
-            db.collection('projects').add({
-                project_id: this.project_id,
-                project_name: this.project_name,
-                project_des: this.project_des
-            })
-            .then(docRef => this.$router.push('/'))
-            .catch(error => console.log(err))
-        }
+    addLabel(e) {
+      var x = e.pageX;
+      var y = e.pageY;
+      //console.log(e,x,y)
+      var labelLength = this.labels.length;
+      //console.log(labelLength)
+      this.labels.push({
+        x: x,
+        y: y,
+        description: ""
+      });
+    },
+    saveManual() {
+      db
+        .collection("projects")
+        .add({
+          project_id: this.project_id,
+          project_name: this.project_name,
+          project_des: this.project_des
+        })
+        .then(docRef => this.$router.push("/"))
+        .catch(error => console.log(err));
     }
-}
+  }
+};
 </script>
 

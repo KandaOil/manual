@@ -1,5 +1,12 @@
 <template>
     <div id="view-manual">
+        <nav>
+            <div class="nav-wrapper blue">
+                <div class="container">
+                    <router-link to="/" class="brand-logo">Manual Manager</router-link>
+                </div>
+            </div>
+        </nav>
         <ul class="collection with-header">
             <li class="collection-header"><h4>{{project_name}}</h4></li>
             <li class="collection-item">Project ID#: {{project_id}}</li>
@@ -39,54 +46,66 @@
 </template>
 
 <script>
-import db from './firebaseInit'
+import db from "./firebaseInit";
 export default {
-    name: 'view-manual',
-    data () {
-        return {
-            project_id: null,
-            project_name: null,
-            project_des: null,
-            pages: null
-        }
+  name: "view-manual",
+  data() {
+    return {
+      project_id: null,
+      project_name: null,
+      project_des: null,
+      pages: null
+    };
+  },
+  beforeRouteEnter(to, from, next) {
+    db
+      .collection("projects")
+      .where("project_id", "==", to.params.project_id)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          next(vm => {
+            (vm.project_id = doc.data().project_id),
+              (vm.project_name = doc.data().project_name),
+              (vm.project_des = doc.data().project_des),
+              (vm.pages = doc.data().pages);
+          });
+        });
+      });
+  },
+  watch: {
+    $route: "fetchData"
+  },
+  methods: {
+    fetchData() {
+      db
+        .collection("projects")
+        .where("project_id", "==", this.$route.params.project_id)
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(doc => {
+            (this.project_id = doc.data().project_id),
+              (this.project_name = doc.data().project_name),
+              (this.project_des = doc.data().project_des),
+              (this.pages = doc.data().pages);
+          });
+        });
     },
-    beforeRouteEnter (to, from, next) {
-        db.collection('projects').where('project_id', '==', to.params.project_id).get().then(querySnapshot => {
+    deleteEmployee() {
+      if (confirm("Are you sure?")) {
+        db
+          .collection("projects")
+          .where("project_id", "==", this.$route.params.project_id)
+          .get()
+          .then(querySnapshot => {
             querySnapshot.forEach(doc => {
-                next(vm => {
-                    vm.project_id = doc.data().project_id,
-                    vm.project_name = doc.data().project_name,
-                    vm.project_des = doc.data().project_des,
-                    vm.pages = doc.data().pages
-                })
-            })
-        })
-    },
-    watch: {
-        '$route': 'fetchData'
-    },
-    methods: {
-        fetchData () {
-            db.collection('projects').where('project_id', '==', this.$route.params.project_id).get().then(querySnapshot => {
-                querySnapshot.forEach(doc => {
-                    this.project_id = doc.data().project_id,
-                    this.project_name = doc.data().project_name,
-                    this.project_des = doc.data().project_des,
-                    this.pages = doc.data().pages
-                })
-            })
-        },
-        deleteEmployee () {
-            if(confirm('Are you sure?')){
-                db.collection('projects').where('project_id', '==', this.$route.params.project_id).get().then(querySnapshot => {
-                querySnapshot.forEach(doc => {
-                    doc.ref.delete()
-                    this.$router.push('/')
-                })
-            })
-            }
-        }
+              doc.ref.delete();
+              this.$router.push("/");
+            });
+          });
+      }
     }
-}
+  }
+};
 </script>
 
